@@ -9,7 +9,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>Core</artifactId>
+    <artifactId>Asteroids</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
@@ -18,8 +18,8 @@
             <artifactId>Common</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-graphics</artifactId>
+            <groupId>dk.sdu.cbse.commonasteroids</groupId>
+            <artifactId>CommonAsteroids</artifactId>
         </dependency>
     </dependencies>
 </project>

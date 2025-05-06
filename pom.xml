@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -8,60 +9,96 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>AsteroidsFX</name>
     <modules>
-        <module>Core</module>
-        <module>Player</module>
         <module>Common</module>
+        <module>CommonAsteroids</module>
+        <module>CommonBullet</module>
+        <module>Core</module>
+        <module>Asteroids</module>
+        <module>Bullet</module>
+        <module>Collision</module>
+        <module>Enemy</module>
+        <module>Player</module>
     </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.parameters>true</maven.compiler.parameters>
+        <maven.dependency.module.path>true</maven.dependency.module.path>
+        <javafx.version>21.0.2</javafx.version>
+        <exec.mainClass>dk.sdu.cbse.main.Main</exec.mainClass>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <!-- Her kan du tilføje afhængigheder -->
+            <dependency>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-controls</artifactId>
+                <version>${javafx.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-graphics</artifactId>
+                <version>${javafx.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-base</artifactId>
+                <version>${javafx.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dk.sdu.cbse</groupId>
+                <artifactId>Common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dk.sdu.cbse.commonasteroids</groupId>
+                <artifactId>CommonAsteroids</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dk.sdu.cbse.commonbullet</groupId>
+                <artifactId>CommonBullet</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.11.0</version>
+                    <configuration>
+                        <release>21</release>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>3.3.0</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
         <plugins>
-            <plugin>
-                <artifactId>maven-clean-plugin</artifactId>
-                <version>3.2.0</version>
-            </plugin>
-
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.10.1</version>
-                <configuration>
-                    <fork>true</fork>
-                </configuration>
-            </plugin>
-
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.5.0</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <version>3.1.0</version>
                 <configuration>
                     <executable>java</executable>
-                    <workingDirectory>.</workingDirectory>
                     <arguments>
-                        <argument>--module-path=mods-mvn</argument>
-                        <argument>--class-path=libs/*</argument>
-                        <argument>-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=127.0.0.1:8000</argument>
-                        <argument>--module=Core/dk.sdu.cbse.main.Main</argument>
-                        <argument>--add-modules javafx.graphics</argument>
+                        <argument>--module-path</argument>
+                        <argument>${project.build.directory}/modules</argument>
+                        <argument>--add-modules</argument>
+                        <argument>javafx.controls,javafx.graphics,javafx.base</argument>
+                        <argument>-m</argument>
+                        <argument>Core/${exec.mainClass}</argument>
                     </arguments>
                 </configuration>
             </plugin>
@@ -70,27 +107,59 @@
 
     <profiles>
         <profile>
-            <id>parent-project</id>
+            <id>copy-modules</id>
             <activation>
-                <file>
-                    <missing>src</missing>
-                </file>
+                <activeByDefault>true</activeByDefault>
             </activation>
             <build>
                 <plugins>
                     <plugin>
-                        <artifactId>maven-clean-plugin</artifactId>
-                        <version>3.2.0</version>
-                        <configuration>
-                            <filesets>
-                                <fileset>
-                                    <directory>mods-mvn</directory>
-                                </fileset>
-                                <fileset>
-                                    <directory>libs</directory>
-                                </fileset>
-                            </filesets>
-                        </configuration>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-dependencies</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>copy-dependencies</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.directory}/modules</outputDirectory>
+                                    <includeScope>runtime</includeScope>
+                                    <excludeArtifactIds>javafx-controls,javafx-graphics,javafx-base</excludeArtifactIds>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>copy-javafx</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>org.openjfx</groupId>
+                                            <artifactId>javafx-controls</artifactId>
+                                            <version>${javafx.version}</version>
+                                            <type>jar</type>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>org.openjfx</groupId>
+                                            <artifactId>javafx-graphics</artifactId>
+                                            <version>${javafx.version}</version>
+                                            <type>jar</type>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>org.openjfx</groupId>
+                                            <artifactId>javafx-base</artifactId>
+                                            <version>${javafx.version}</version>
+                                            <type>jar</type>
+                                        </artifactItem>
+                                    </artifactItems>
+                                    <outputDirectory>${project.build.directory}/modules</outputDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
