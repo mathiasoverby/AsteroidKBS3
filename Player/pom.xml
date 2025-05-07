@@ -12,6 +12,7 @@
     <artifactId>Player</artifactId>
     <packaging>jar</packaging>
 
+
     <dependencies>
         <dependency>
             <groupId>${project.parent.groupId}</groupId>

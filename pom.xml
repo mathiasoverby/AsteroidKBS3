@@ -1,34 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>dk.sdu.cbse</groupId>
     <artifactId>AsteroidsFX</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
+    <name>AsteroidsFX</name>
+    <repositories>
+    </repositories>
 
     <modules>
-        <module>Common</module>
-        <module>CommonAsteroids</module>
-        <module>CommonBullet</module>
         <module>Core</module>
-        <module>Asteroids</module>
-        <module>Bullet</module>
-        <module>Collision</module>
-        <module>Enemy</module>
+        <module>Common</module>
         <module>Player</module>
+        <module>Bullet</module>
+        <module>CommonBullet</module>
+        <module>Enemy</module>
+        <module>Asteroids</module>
+        <module>Collision</module>
     </modules>
-
     <properties>
+        <java>java</java>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
-        <maven.compiler.parameters>true</maven.compiler.parameters>
-        <maven.dependency.module.path>true</maven.dependency.module.path>
-        <javafx.version>21.0.2</javafx.version>
-        <exec.mainClass>dk.sdu.cbse.main.Main</exec.mainClass>
+        <maven.compiler.source>1.9</maven.compiler.source>
+        <maven.compiler.target>1.9</maven.compiler.target>
     </properties>
 
     <dependencyManagement>
@@ -36,69 +32,58 @@
             <dependency>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-controls</artifactId>
-                <version>${javafx.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.openjfx</groupId>
-                <artifactId>javafx-graphics</artifactId>
-                <version>${javafx.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.openjfx</groupId>
-                <artifactId>javafx-base</artifactId>
-                <version>${javafx.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>dk.sdu.cbse</groupId>
-                <artifactId>Common</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>dk.sdu.cbse.commonasteroids</groupId>
-                <artifactId>CommonAsteroids</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>dk.sdu.cbse.commonbullet</groupId>
-                <artifactId>CommonBullet</artifactId>
-                <version>${project.version}</version>
+                <version>21.0.2</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
-
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.11.0</version>
-                    <configuration>
-                        <release>21</release>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <version>3.3.0</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-
         <plugins>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.2.0</version>
+            </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.10.1</version>
+                <configuration>
+                    <fork>true</fork>
+                </configuration>
+            </plugin>
+            <!-- execute the resulting project -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>1.6.0</version>
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
-                    <executable>java</executable>
+                    <executable>${java}</executable>
+                    <workingDirectory>.</workingDirectory>
+                    <longModulepath>false</longModulepath>
                     <arguments>
-                        <argument>--module-path</argument>
-                        <argument>${project.build.directory}/modules</argument>
-                        <argument>--add-modules</argument>
-                        <argument>javafx.controls,javafx.graphics,javafx.base</argument>
-                        <argument>-m</argument>
-                        <argument>Core/${exec.mainClass}</argument>
+                        <!--
+                                                On Mac Devices this line should not be commented out
+                                                <argument>-XstartOnFirstThread</argument>
+                        -->
+                        <argument>-Dorg.lwjgl.util.Debug=true</argument>
+                        <argument>-Djava.library.path=libs</argument>
+                        <argument>--module-path=mods-mvn</argument>
+                        <argument>--class-path=libs/*</argument>
+                        <!-- because spark.core is an automatic module and actually required,
+                        monitor.observer.zero would be resolved as well and does not need
+                        to be added explicitly;
+                        I still wanted to do it for clarity, but for some reason that results
+                        in "java.lang.module.FindException: Module monitor.observer.zero not found";
+                        strange... -->
+                        <!--                        <argument>-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=127.0.0.1:8000</argument>                        &ndash;&gt;-->
+                        <argument>--module=Core/dk.sdu.cbse.main.Main</argument>
+                        <argument>--add-modules javafx.graphics</argument>
                     </arguments>
                 </configuration>
             </plugin>
@@ -107,56 +92,66 @@
 
     <profiles>
         <profile>
-            <id>copy-modules</id>
+            <!-- parent project should delete 'mods-mvn' -->
+            <id>parent-project</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <file>
+                    <missing>src</missing>
+                </file>
             </activation>
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-clean-plugin</artifactId>
+                        <version>3.2.0</version>
+                        <configuration>
+                            <filesets>
+                                <fileset>
+                                    <directory>mods-mvn</directory>
+                                </fileset>
+                                <fileset>
+                                    <directory>libs</directory>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <!-- child projects should copy artifact into 'mods-mvn' -->
+            <id>child-project</id>
+            <activation>
+                <file>
+                    <exists>src</exists>
+                </file>
+            </activation>
+
+
+
+
+            <build>
+                <plugins>
+                    <plugin>
                         <artifactId>maven-dependency-plugin</artifactId>
+                        <version>3.0.2</version>
                         <executions>
                             <execution>
-                                <id>copy-dependencies</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>copy-dependencies</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${project.build.directory}/modules</outputDirectory>
-                                    <includeScope>runtime</includeScope>
-                                    <excludeArtifactIds>javafx-controls,javafx-graphics,javafx-base</excludeArtifactIds>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>copy-javafx</id>
-                                <phase>package</phase>
+                                <id>copy-installed</id>
+                                <phase>install</phase>
                                 <goals>
                                     <goal>copy</goal>
                                 </goals>
                                 <configuration>
                                     <artifactItems>
                                         <artifactItem>
-                                            <groupId>org.openjfx</groupId>
-                                            <artifactId>javafx-controls</artifactId>
-                                            <version>${javafx.version}</version>
-                                            <type>jar</type>
-                                        </artifactItem>
-                                        <artifactItem>
-                                            <groupId>org.openjfx</groupId>
-                                            <artifactId>javafx-graphics</artifactId>
-                                            <version>${javafx.version}</version>
-                                            <type>jar</type>
-                                        </artifactItem>
-                                        <artifactItem>
-                                            <groupId>org.openjfx</groupId>
-                                            <artifactId>javafx-base</artifactId>
-                                            <version>${javafx.version}</version>
+                                            <groupId>${project.groupId}</groupId>
+                                            <artifactId>${project.artifactId}</artifactId>
+                                            <version>${project.version}</version>
                                             <type>jar</type>
                                         </artifactItem>
                                     </artifactItems>
-                                    <outputDirectory>${project.build.directory}/modules</outputDirectory>
+                                    <outputDirectory>../mods-mvn</outputDirectory>
                                 </configuration>
                             </execution>
                         </executions>
