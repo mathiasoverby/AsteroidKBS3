@@ -9,37 +9,36 @@ public class AsteroidsPlugin implements IGamePluginService{
     private Random random = new Random();
     @Override
     public void start(GameData gameData, World world) {
-        for(int i = 0; i<5; i++)
-            world.addEntity(createRandomAsteroid(gameData));
+        for (int i = 0; i < 5; i++) {
+            Entity asteroid = createRandomAsteroid(gameData);
+            world.addEntity(asteroid);
+        }
     }
 
     @Override
     public void stop(GameData gameData, World world) {
-        // Remove entities
+
         for (Entity asteroid : world.getEntities(Asteroids.class)) {
             world.removeEntity(asteroid);
         }
     }
 
-    private Entity createRandomAsteroid(GameData gameData){
+    private Entity createRandomAsteroid(GameData gameData) {
         Entity asteroid = new Asteroids();
-        int size = random.nextInt(15)+10;
-        int sides = random.nextInt(5)+5;
+        int size = 15;
 
-        double[] coordinates = new double[sides *2];
-        for(int i = 0; i < sides; i++){
-            double angle = 2*Math.PI/sides;
-            double radiusVariation = size * (0.7 + random.nextDouble() *0.6);
-            coordinates[2*i] = radiusVariation + Math.cos(angle);
-            coordinates[2*i+1] = radiusVariation + Math.sin(angle);
-        }
 
-        asteroid.setPolygonCoordinates(coordinates);
+        asteroid.setPolygonCoordinates(
+                15, 0,   10, 10,
+                0, 15,   -10, 10,
+                -15, 0,  -10, -10,
+                0, -15,  10, -10
+        );
+
         asteroid.setX(random.nextDouble() * gameData.getDisplayWidth());
         asteroid.setY(random.nextDouble() * gameData.getDisplayHeight());
-        asteroid.setRadius(size);
-        asteroid.setRotation(random.nextDouble()*360);
+        asteroid.setRadius(size); // Consistent radius
+        asteroid.setRotation(random.nextDouble() * 360);
         return asteroid;
-
     }
 }

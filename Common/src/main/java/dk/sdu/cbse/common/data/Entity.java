@@ -1,25 +1,25 @@
 package dk.sdu.cbse.common.data;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.UUID;
 
 public class Entity implements Serializable {
 
     private final UUID ID = UUID.randomUUID();
-
     private double[] polygonCoordinates;
     private double x;
     private double y;
     private double rotation;
-    private float radius;
-
+    private float radius = 5f;
 
     public String getID() {
         return ID.toString();
     }
 
 
-    public void setPolygonCoordinates(double... coordinates ) {
+
+    public void setPolygonCoordinates(double... coordinates) {
         this.polygonCoordinates = coordinates;
     }
 
@@ -27,15 +27,13 @@ public class Entity implements Serializable {
         return polygonCoordinates;
     }
 
-
     public void setX(double x) {
-        this.x =x;
+        this.x = x;
     }
 
     public double getX() {
         return x;
     }
-
 
     public void setY(double y) {
         this.y = y;
@@ -59,5 +57,18 @@ public class Entity implements Serializable {
 
     public float getRadius() {
         return this.radius;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Entity entity = (Entity) obj;
+        return ID.equals(entity.ID);
+    }
+
+    @Override
+    public int hashCode() {
+        return ID.hashCode();
     }
 }

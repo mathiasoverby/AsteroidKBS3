@@ -17,12 +17,12 @@
         <dependency>
             <groupId>${project.parent.groupId}</groupId>
             <artifactId>Common</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.parent.groupId}.commonbullet</groupId>
             <artifactId>CommonBullet</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>

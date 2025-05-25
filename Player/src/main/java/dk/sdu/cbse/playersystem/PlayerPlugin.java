@@ -6,6 +6,7 @@ import dk.sdu.cbse.common.services.IGamePluginService;
 public class PlayerPlugin implements IGamePluginService {
     private Entity player;
 
+
     public PlayerPlugin() {
     }
 
@@ -20,9 +21,9 @@ public class PlayerPlugin implements IGamePluginService {
     private Entity createPlayerShip(GameData gameData) {
 
         Entity playerShip = new Player();
-        playerShip.setPolygonCoordinates(-5,-5,10,0,-5,5);
-        playerShip.setX(gameData.getDisplayHeight()/2);
-        playerShip.setY(gameData.getDisplayWidth()/2);
+        playerShip.setPolygonCoordinates(-5, -5, 10, 0, -5, 5);
+        playerShip.setX(gameData.getDisplayWidth() / 2);  // Center of the screen (horizontal)
+        playerShip.setY(gameData.getDisplayHeight() - 50);  // Place player slightly higher to avoid collision
         playerShip.setRadius(8);
         return playerShip;
     }
