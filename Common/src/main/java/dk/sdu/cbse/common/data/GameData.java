@@ -6,6 +6,7 @@ public class GameData {
     private int displayHeight = 800;
     private final GameKeys keys = new GameKeys();
     private double time;
+    private double deltaTime;
 
 
     public GameKeys getKeys() {
@@ -36,4 +37,12 @@ public class GameData {
         this.time = time;
     }
 
+
+    public double getDeltaTime() {
+        return deltaTime;
+    }
+
+    public void setDeltaTime(double deltaTime) {
+        this.deltaTime = deltaTime;
+    }
 }
