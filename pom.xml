@@ -104,7 +104,7 @@
                 </configuration>
             </plugin>
 
-            <!-- execute the resulting project -->
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
@@ -132,7 +132,6 @@
 
     <profiles>
         <profile>
-            <!-- parent project should delete 'mods-mvn' -->
             <id>parent-project</id>
             <activation>
                 <file>
@@ -159,7 +158,7 @@
             </build>
         </profile>
         <profile>
-            <!-- child projects should copy artifact into 'mods-mvn' -->
+
             <id>child-project</id>
             <activation>
                 <file>

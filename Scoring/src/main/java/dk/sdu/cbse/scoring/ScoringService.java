@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 @SpringBootApplication
 @RestController
+
 public class ScoringService {
     private int score = 0;
 
