@@ -26,7 +26,6 @@ public class ModuleConfig {
         return new World();
     }
 
-
     @Bean
     public List<IEntityProcessingService> entityProcessingServiceList() {
         return ServiceLoader.load(IEntityProcessingService.class)
