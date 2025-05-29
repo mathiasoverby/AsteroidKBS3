@@ -6,6 +6,6 @@ module Core {
     uses dk.sdu.cbse.common.services.IGamePluginService;
     uses dk.sdu.cbse.common.services.IEntityProcessingService;
     uses dk.sdu.cbse.common.services.IPostEntityProcessingService;
-    opens dk.sdu.cbse.main to spring.core;
-
+    opens dk.sdu.cbse.main to javafx.graphics;
+    exports dk.sdu.cbse.main;
 }

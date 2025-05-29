@@ -12,7 +12,7 @@ public class AsteroidsProcessor implements IEntityProcessingService {
     private Random random = new Random();
     @Override
     public void process(GameData gameData, World world) {
-        for (Entity asteroid : world.getEntities(Asteroids.class)) {
+        for (Entity asteroid : world.getEntities(HelloWorld.class)) {
             // Move asteroid based on its rotation
             double changeX = Math.cos(Math.toRadians(asteroid.getRotation()));
             double changeY = Math.sin(Math.toRadians(asteroid.getRotation()));
@@ -39,7 +39,7 @@ public class AsteroidsProcessor implements IEntityProcessingService {
     }
 
     public void createAsteroid(GameData gameData, World world) {
-        Entity asteroid = new Asteroids();
+        Entity asteroid = new HelloWorld();
         asteroid.setPolygonCoordinates(
                 15, 0,   10, 10,
                 0, 15,   -10, 10,
