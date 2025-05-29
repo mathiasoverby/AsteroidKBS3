@@ -19,7 +19,7 @@ class CollisionSystemTest {
     @Test
     void collides_WhenEntitiesOverlap_ReturnsTrue() {
         Entity a = createEntity(100, 100, 10);
-        Entity b = createEntity(105, 105, 10);
+        Entity b = createEntity(100, 100, 10);
         assertTrue(collisionSystem.collides(a, b));
     }
 

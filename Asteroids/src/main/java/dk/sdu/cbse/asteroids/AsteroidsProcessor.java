@@ -27,9 +27,6 @@ public class AsteroidsProcessor implements IEntityProcessingService {
 
         }
 
-
-
-
         int randomInt = random.nextInt(50);
 
         if (randomInt == 1) {

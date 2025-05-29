@@ -15,12 +15,6 @@ public class ScoringService {
     }
 
 
-    @GetMapping("/score")
-    public int getScore() {
-        return score;
-    }
-
-
     @PostMapping("/score")
     public int updateScore(@RequestParam(defaultValue = "0") int increment) {
         score += increment;
@@ -28,9 +22,4 @@ public class ScoringService {
     }
 
 
-    @DeleteMapping("/score")
-    public int resetScore() {
-        score = 0;
-        return score;
-    }
 }

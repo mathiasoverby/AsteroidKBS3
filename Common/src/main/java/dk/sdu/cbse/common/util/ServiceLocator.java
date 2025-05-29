@@ -10,59 +10,62 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public enum ServiceLocator {
+
     INSTANCE;
 
-    private static final Map<Class<?>, ServiceLoader<?>> loadermap = new HashMap<>();
-    private final ModuleLayer layer;
+    private static final Map<Class, ServiceLoader> serviceLoaderMap = new HashMap<>();
+    private final ModuleLayer moduleLayer;
 
     ServiceLocator() {
         try {
-            Path pluginsDir = Paths.get("plugins"); // Directory with plugins JARs
+            Path pluginDirectory = Paths.get("plugins"); // Directory containing plugin JAR files
 
-            // Search for plugins in the plugins directory
-            ModuleFinder pluginsFinder = ModuleFinder.of(pluginsDir);
+            // Locate plugin modules in the specified directory
+            ModuleFinder pluginModuleFinder = ModuleFinder.of(pluginDirectory);
 
-            // Find all names of all found plugin modules
-            List<String> plugins = pluginsFinder
+            // Extract the names of all plugin modules
+            List<String> pluginNames = pluginModuleFinder
                     .findAll()
                     .stream()
                     .map(ModuleReference::descriptor)
                     .map(ModuleDescriptor::name)
                     .collect(Collectors.toList());
 
-            // Create configuration that will resolve plugin modules
-            Configuration pluginsConfiguration = ModuleLayer
+            // Resolve the plugin modules and ensure correct graph configuration
+            Configuration moduleConfiguration = ModuleLayer
                     .boot()
                     .configuration()
-                    .resolve(pluginsFinder, ModuleFinder.of(), plugins);
+                    .resolve(pluginModuleFinder, ModuleFinder.of(), pluginNames);
 
-            // Create a module layer for plugins
-            layer = ModuleLayer
+            // Define a new module layer for plugins using the system class loader
+            moduleLayer = ModuleLayer
                     .boot()
-                    .defineModulesWithOneLoader(pluginsConfiguration, ClassLoader.getSystemClassLoader());
+                    .defineModulesWithOneLoader(moduleConfiguration, ClassLoader.getSystemClassLoader());
         } catch (Exception e) {
-            throw new RuntimeException("Failed to initialize ServiceLocator", e);
+            throw new RuntimeException("Failed to initialize plugin module layer", e);
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> List<T> locateAll(Class<T> service) {
-        ServiceLoader<T> loader = (ServiceLoader<T>) loadermap.get(service);
+    public <T> List<T> locateServices(Class<T> serviceType) {
+        ServiceLoader<T> svloader = serviceLoaderMap.get(serviceType);
 
-        if (loader == null) {
-            loader = ServiceLoader.load(layer, service);
-            loadermap.put(service, loader);
+        if (svloader == null) {
+            svloader = ServiceLoader.load(moduleLayer, serviceType);
+            serviceLoaderMap.put(serviceType, svloader);
         }
 
-        List<T> list = new ArrayList<>();
-        if (loader != null) {
+        List<T> services = new ArrayList<>();
+
+        if (svloader != null) {
             try {
-                loader.iterator().forEachRemaining(list::add);
-            } catch (ServiceConfigurationError serviceError) {
-                System.err.println("Error loading service " + service.getName());
-                serviceError.printStackTrace();
+                for (T service : svloader) {
+                    services.add(service);
+                }
+            } catch (ServiceConfigurationError error) {
+                error.printStackTrace();
             }
         }
-        return list;
+
+        return services;
     }
 }

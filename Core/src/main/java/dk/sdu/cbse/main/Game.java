@@ -15,12 +15,12 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.text.Text;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import dk.sdu.cbse.common.data.ScoreClient;
+
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.io.IOException;
+
 
 public class Game {
     private final GameData gameData;
@@ -33,7 +33,7 @@ public class Game {
 
 
     private Text scoreText;
-    private int currentScore = 0;
+
 
     public Game(GameData gameData, World world,
                 List<IGamePluginService> gamePlugins,
@@ -182,20 +182,4 @@ public class Game {
         });
     }
 
-
-    public void updateScoreText(int newScore) {
-        this.currentScore = newScore;
-        scoreText.setText("Score: " + currentScore);
-    }
-
-
-    public void incrementScore(int increment) {
-        try {
-
-            int updatedScore = new ScoreClient().updateScore(increment);
-            updateScoreText(updatedScore);
-        } catch (IOException | InterruptedException e) {
-            System.out.println("Failed to update score");
-        }
-    }
 }

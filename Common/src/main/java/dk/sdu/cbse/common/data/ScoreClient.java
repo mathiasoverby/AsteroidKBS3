@@ -11,17 +11,6 @@ public class ScoreClient {
     private final String url = "http://localhost:8081/score";
 
 
-    public int getScore() throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .GET()
-                .build();
-
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        return response.body().isEmpty() ? 0 : Integer.parseInt(response.body());
-    }
-
-
     public int updateScore(int increment) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url + "?increment=" + increment))
@@ -32,14 +21,4 @@ public class ScoreClient {
         return response.body().isEmpty() ? 0 : Integer.parseInt(response.body());
     }
 
-
-    public int resetScore() throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .DELETE()
-                .build();
-
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        return response.body().isEmpty() ? 0 : Integer.parseInt(response.body());
-    }
 }
